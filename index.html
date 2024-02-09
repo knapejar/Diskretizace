@@ -22,7 +22,7 @@
                             <div class="alert alert-primary">
                                 <h5>Parametry diskretizace</h5>
                                 <div class="mb-3">
-                                    <label for="vzorkovaciPerioda" class="form-label">Vzorkovací perioda</label>
+                                    <label for="vzorkovaciPerioda" class="form-label">Vzorkovací perioda [1/1000]</label>
                                     <input type="number" class="form-control" id="vzorkovaciPerioda" placeholder="Např. 10" value="10" min="1" max="100">
                                 </div>
                                 <div class="mb-3">
@@ -43,14 +43,26 @@
                             </div>
                         </form>
                     </div>
-                    <div class="col pb-3">
+                    <div class="col-9 pb-3 col-sm-12 col-md-12 col-lg-9 col-xl-9">
                         <canvas id="chartContainer"></canvas>
+                        <div class="position-absolute top-0 end-0 p-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox" id="autoUpdateCheckbox" checked>
+                                <label class="form-check-label" for="autoUpdateCheckbox">
+                                    Aktualizace grafu
+                                </label>
+                            </div>
+                        </div>
                     </div>
-
                 </div>
             </div>
         </div>
     </div>
+</div>
+
+<footer class="text-center mt-5">
+    <p>&copy; 2024 Jaroslav Knápek, Teorie přenosu informace</p>
+</footer>
     
     
 </div>
@@ -60,6 +72,12 @@
 <script>
 // Definice funkce pro generování signálu
 const TIME_STEP = 0.001;
+var autoUpdate = true;
+
+document.getElementById('autoUpdateCheckbox').addEventListener('change', function() {
+    autoUpdate = this.checked;
+    if (autoUpdate) updateChart();
+});
 
 function generateSignal(frequency) {
     const points = [];
@@ -121,25 +139,38 @@ function drawChart(originalSignal, sampledSignal) {
     });
 }
 
+
 function updateChart() {
     const vzorkovaciPerioda = parseInt(document.getElementById('vzorkovaciPerioda').value);
     const sirkaKvantizacnihoIntervalu = parseFloat(document.getElementById('sirkaKvantizacnihoIntervalu').value);
     const signalFrequency = parseInt(document.getElementById('signalFrequency').value);
     const originalSignal = generateSignal(signalFrequency);
     const sampledSignal = quantizeSignal(sampleSignal(originalSignal, vzorkovaciPerioda), sirkaKvantizacnihoIntervalu);
-    drawChart(originalSignal, sampledSignal);
+    if (window.myChart == null) {
+        drawChart(originalSignal, sampledSignal);
+    } else {
+        window.myChart.data.datasets[0].data = sampledSignal;
+        window.myChart.data.datasets[1].data = originalSignal;
+        window.myChart.update();
+    }
 }
 
 document.onload = updateChart();
 
 document.getElementById('vzorkovaciPerioda').addEventListener('change', function() {
-    updateChart();
+    if (autoUpdate) {
+        updateChart();
+    }
 });
 document.getElementById('sirkaKvantizacnihoIntervalu').addEventListener('change', function() {
-    updateChart();
+    if (autoUpdate) {
+        updateChart();
+    }
 });
 document.getElementById('signalFrequency').addEventListener('change', function() {
-    updateChart();
+    if (autoUpdate) {
+        updateChart();
+    }
 });
 
 </script>
