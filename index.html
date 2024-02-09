@@ -61,7 +61,7 @@
 </div>
 
 <footer class="text-center mt-5">
-    <p>&copy; 2024 Jaroslav Knápek, Teorie přenosu informace</p>
+    <p>&copy; 2024 Jaroslav Knápek, Teorie přenosu informace, zdroj: <a href="https://cs.wikipedia.org/wiki/Kvantov%C3%A1n%C3%AD_(sign%C3%A1l)" target="_blank">Wikipedie</a></p>
 </footer>
     
     
@@ -90,16 +90,19 @@ function generateSignal(frequency) {
 
 // Vzorkování
 function sampleSignal(signal, samplePeriod) {
-    return signal.filter((_, index) => index % samplePeriod === 0);
+    return signal.filter((_, index) => {
+        return index % samplePeriod === 0;
+    });
 }
 
 // Kvantování
 function quantizeSignal(signal, quantizationStep) {
-    return signal.map(point => ({
-        x: point.x,
-        y: Math.round(point.y / quantizationStep) * quantizationStep
-    }));
+    return signal.map(point => {
+        const roundedY = Math.round(point.y / quantizationStep) * quantizationStep;
+        return { x: point.x, y: roundedY };
+    });
 }
+
 
 function drawChart(originalSignal, sampledSignal) {
     const ctx = document.getElementById('chartContainer');
@@ -135,6 +138,12 @@ function drawChart(originalSignal, sampledSignal) {
                 }
             },        
             maintainAspectRatio: false,
+            plugins: {
+                legend: {
+                    display: true,
+                    position: 'bottom'
+                }
+            }
         }
     });
 }
