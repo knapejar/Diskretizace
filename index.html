@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diskretizace Signálu</title>
+</head>
+<body>
+
+<div class="container mt-5">
+    <h2>Diskretizace Signálu</h2>
+    <div class="mb-3">
+        <label for="vzorkovaciPerioda" class="form-label">Vzorkovací perioda</label>
+        <input type="number" class="form-control" id="vzorkovaciPerioda" placeholder="Např. 10" value="10">
+    </div>
+    <div class="mb-3">
+        <label for="sirkaKvantizacnihoIntervalu" class="form-label">Šířka kvantizačního intervalu</label>
+        <input type="number" step="0.1" class="form-control" id="sirkaKvantizacnihoIntervalu" placeholder="Např. 0.1" value="0.1">
+    </div>
+    <button id="applyBtn" class="btn btn-primary">Aplikovat</button>
+    
+    <canvas id="chartContainer" style="margin-top: 20px;"></canvas>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script>
+// Definice funkce pro generování signálu
+function generateSignal() {
+    const points = [];
+    for (let t = 0; t <= 1; t += 0.001) {
+        points.push({x: t, y: Math.sin(2 * Math.PI * 5 * t)});
+    }
+    return points;
+}
+
+// Funkce pro vzorkování
+function sampleSignal(signal, samplePeriod) {
+    return signal.filter((_, index) => index % samplePeriod === 0);
+}
+
+// Funkce pro kvantování
+function quantizeSignal(signal, quantizationStep) {
+    return signal.map(point => ({
+        x: point.x,
+        y: Math.round(point.y / quantizationStep) * quantizationStep
+    }));
+}
+
+// Vykreslení grafu
+function drawChart(originalSignal, sampledSignal) {
+    const ctx = document.getElementById('chartContainer');
+    if (window.myChart != null) {
+        window.myChart.destroy();
+    }
+    window.myChart = new Chart(ctx, {
+        type: 'line',
+        data: {
+            datasets: [{
+                label: 'Původní Signál',
+                data: originalSignal,
+                fill: false,
+                borderColor: 'blue',
+                tension: 0.1
+            }, {
+                label: 'Diskretizovaný Signál',
+                data: sampledSignal,
+                fill: false,
+                borderColor: 'red',
+                borderWidth: 2,
+                pointRadius: 2,
+                tension: 0.1
+            }]
+        },
+        options: {
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom'
+                }
+            }
+        }
+    });
+}
+
+document.getElementById('applyBtn').addEventListener('click', function() {
+    const vzorkovaciPerioda = parseInt(document.getElementById('vzorkovaciPerioda').value);
+    const sirkaKvantizacnihoIntervalu = parseFloat(document.getElementById('sirkaKvantizacnihoIntervalu').value);
+    const originalSignal = generateSignal();
+    const sampledSignal = quantizeSignal(sampleSignal(originalSignal, vzorkovaciPerioda), sirkaKvantizacnihoIntervalu);
+    drawChart(originalSignal, sampledSignal);
+});
+</script>
+
+</body>
+</html>
