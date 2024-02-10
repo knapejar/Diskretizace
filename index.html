@@ -23,7 +23,7 @@
                                 <h5>Parametry diskretizace</h5>
                                 <div class="mb-3">
                                     <label for="vzorkovaciPerioda" class="form-label">Vzorkovací perioda [1/1000]</label>
-                                    <input type="number" class="form-control" id="vzorkovaciPerioda" placeholder="Např. 10" value="10" min="1" max="100">
+                                    <input type="number" class="form-control" id="vzorkovaciPerioda" placeholder="Např. 10" value="25" min="1" max="100">
                                 </div>
                                 <div class="mb-3">
                                     <label for="sirkaKvantizacnihoIntervalu" class="form-label">Šířka kvantizačního intervalu</label>
@@ -118,8 +118,8 @@ function drawChart(originalSignal, sampledSignal) {
                 fill: false,
                 borderColor: 'red',
                 borderWidth: 2,
-                pointRadius: 2,
-                tension: 0.1
+                pointRadius: 1.7,
+                stepped: true,
             }, {
                 label: 'Původní Signál',
                 data: originalSignal,
