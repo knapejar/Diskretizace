@@ -6,7 +6,6 @@
     <title>Diskretizace Signálu</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
-
 </head>
 <body>
 
@@ -37,7 +36,7 @@
 
                             <div class="alert alert-secondary">
                                 <h5>Parametry signálu</h5>
-                                <span class="input-group-text">f(t) = sin(2πft)</span>
+                                <div class="code-editor"></div>
                                 <span class="input-group-text">t ∈ [0, 1]</span>
                                 <span class="input-group-text">Δt = 0.001</span>
                             </div>
@@ -69,6 +68,7 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
 <script>
 // Definice funkce pro generování signálu
 const TIME_STEP = 0.001;
@@ -79,10 +79,17 @@ document.getElementById('autoUpdateCheckbox').addEventListener('change', functio
     if (autoUpdate) updateChart();
 });
 
+const flask = new CodeFlask('.code-editor', { language: 'js', lineNumbers: false });
+flask.updateCode("Math.sin(2 * Math.PI * frequency * t)")
+const codeEditor = document.getElementsByClassName('code-editor')[0];
+codeEditor.children[0].style = "position: relative; width: 100%; height: 100px;";
+
 function generateSignal(frequency) {
+    const functionCode = "function customSignal(t, frequency) {\n  return " + flask.getCode() + ";\n}";
     const points = [];
+    const signalFunction = new Function('t', 'frequency', `${functionCode}; return customSignal(t, frequency);`);
     for (let t = 0; t <= 1; t += TIME_STEP) {
-        points.push({x: t, y: Math.sin(2 * Math.PI * frequency * t)});
+        points.push({x: t, y: signalFunction(t, frequency)});
     }
     return points;
 }
@@ -104,7 +111,7 @@ function quantizeSignal(signal, quantizationStep) {
 }
 
 
-function drawChart(originalSignal, sampledSignal) {
+function drawChart(originalSignal, sampledSignal, quantizedSignal) {
     const ctx = document.getElementById('chartContainer');
     if (window.myChart != null) {
         window.myChart.destroy();
@@ -114,9 +121,17 @@ function drawChart(originalSignal, sampledSignal) {
         data: {
             datasets: [{
                 label: 'Diskretizovaný Signál',
-                data: sampledSignal,
+                data: quantizedSignal,
                 fill: false,
                 borderColor: 'red',
+                borderWidth: 2,
+                pointRadius: 1.7,
+                stepped: true,
+            }, {
+                label: 'Vzorkovaný signál',
+                data: sampledSignal,
+                fill: false,
+                borderColor: 'green',
                 borderWidth: 2,
                 pointRadius: 1.7,
                 stepped: true,
@@ -154,12 +169,14 @@ function updateChart() {
     const sirkaKvantizacnihoIntervalu = parseFloat(document.getElementById('sirkaKvantizacnihoIntervalu').value);
     const signalFrequency = parseInt(document.getElementById('signalFrequency').value);
     const originalSignal = generateSignal(signalFrequency);
-    const sampledSignal = quantizeSignal(sampleSignal(originalSignal, vzorkovaciPerioda), sirkaKvantizacnihoIntervalu);
+    const sampledSignal = sampleSignal(originalSignal, vzorkovaciPerioda)
+    const quantizedSignal = quantizeSignal(sampledSignal, sirkaKvantizacnihoIntervalu);
     if (window.myChart == null) {
-        drawChart(originalSignal, sampledSignal);
+        drawChart(originalSignal, sampledSignal, quantizedSignal);
     } else {
-        window.myChart.data.datasets[0].data = sampledSignal;
-        window.myChart.data.datasets[1].data = originalSignal;
+        window.myChart.data.datasets[0].data = quantizedSignal;
+        window.myChart.data.datasets[1].data = sampledSignal;
+        window.myChart.data.datasets[2].data = originalSignal;
         window.myChart.update();
     }
 }
@@ -177,6 +194,11 @@ document.getElementById('sirkaKvantizacnihoIntervalu').addEventListener('change'
     }
 });
 document.getElementById('signalFrequency').addEventListener('change', function() {
+    if (autoUpdate) {
+        updateChart();
+    }
+});
+flask.onUpdate(function() {
     if (autoUpdate) {
         updateChart();
     }
