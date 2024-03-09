@@ -6,6 +6,7 @@
     <title>Diskretizace Signálu</title>
 
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 </head>
 <body>
 
@@ -13,10 +14,10 @@
     <div class="container container-lg">
         <div class="card">
             <div class="card-body">
-                <h1 class="card-title text-center p-2">Diskretizace Signálu</h1>
+                <h1 class="card-title p-2">Diskretizace Signálu</h1>
                 
                 <div class="row">
-                    <div class="col-12 col-sm-12 col-md-12 col-lg-3 col-xl-3">
+                    <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
                         <form>
                             <div class="alert alert-primary">
                                 <h5>Parametry diskretizace</h5>
@@ -26,24 +27,38 @@
                                 </div>
                                 <div class="mb-3">
                                     <label for="sirkaKvantizacnihoIntervalu" class="form-label">Šířka kvantizačního intervalu</label>
-                                    <input type="number" step="0.1" class="form-control" id="sirkaKvantizacnihoIntervalu" placeholder="Např. 0.1" value="0.1" min="0.1" max="1">
+                                    <input type="number" step="0.1" class="form-control" id="sirkaKvantizacnihoIntervalu" placeholder="Např. 0.1" value="0.2" min="0.1" max="1">
                                 </div>
                                 <div class="mb-3">
                                     <label for="signalFrequency" class="form-label">Periody signálu</label>
-                                    <input type="number" step="1" class="form-control" id="signalFrequency" placeholder="Např. 5" value="1" min="1" max="100">
+                                    <input type="number" step="1" class="form-control" id="signalFrequency" placeholder="Např. 5" value="2" min="1" max="100">
                                 </div>
                             </div>
 
                             <div class="alert alert-secondary">
-                                <h5>Parametry signálu</h5>
-                                <div class="code-editor"></div>
-                                <span class="input-group-text">t ∈ [0, 1]</span>
-                                <span class="input-group-text">Δt = 0.001</span>
+                                <h5>
+                                    Parametry Signálu
+                                    <small id="errorInCode" class="text-danger" style="display: none;">
+                                        <i class="bi bi-exclamation-triangle-fill"></i>
+                                    </small>
+                                </h5>
+                                <div class="row code-editor"></div>
+                                <div class="row">
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(0)">Lineární funkce</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(1)">Periodická funkce</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(2)">Exponenciální funkce</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(3)">Absolutní hodnota</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(4)">Bézierova křivka</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(5)">Šum</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(6)">Sinusoida s šumem</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(7)">Souvislý šum</li>
+                                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(8)">Sinusoida se souvislým šumem</li>
+                                </div>
                             </div>
                         </form>
                     </div>
-                    <div class="col-12 pb-3 col-sm-12 col-md-12 col-lg-9 col-xl-9">
-                        <canvas id="chartContainer"></canvas>
+                    <div class="col-12 pb-3 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+                        <canvas id="chartContainer" style="min-width: 100%; min-height: 200px;"></canvas>
                         <div class="position-absolute top-0 end-0 p-3">
                             <div class="form-check">
                                 <input class="form-check-input" type="checkbox" id="autoUpdateCheckbox" checked>
@@ -79,17 +94,41 @@ document.getElementById('autoUpdateCheckbox').addEventListener('change', functio
     if (autoUpdate) updateChart();
 });
 
+var last = 0;
 const flask = new CodeFlask('.code-editor', { language: 'js', lineNumbers: false });
-flask.updateCode("Math.sin(2 * Math.PI * frequency * t)")
+function example(index) {
+    const examples = [
+        "t % (1/period)",
+        "Math.sin(2 * Math.PI * period * t)",
+        "Math.pow(2, t)",
+        "Math.abs(5 * (t - 0.3) * (t - 0.7))",
+        "Math.pow(1 - t, 3) * (-1) + 3 * Math.pow(1 - t, 2) * t * (3) + 3 * (1 - t) * Math.pow(t, 2) * (-2) + Math.pow(t, 3) * (1)",
+        "Math.random() * 1;",
+        "Math.sin(2 * Math.PI * period * t) + (Math.random() - 0.5) * 0.3",
+        "last = last + (Math.random() - 0.5) * 0.1",
+        "Math.sin(2 * Math.PI * period * t) + (last = last + (Math.random() - 0.5) * 0.1)"
+    ];
+    flask.updateCode(examples[index]);
+    updateChart();
+}
+example(8);
 const codeEditor = document.getElementsByClassName('code-editor')[0];
-codeEditor.children[0].style = "position: relative; width: 100%; height: 100px;";
+codeEditor.children[0].style = "position: relative; width: 100%; height: 80px;";
 
-function generateSignal(frequency) {
-    const functionCode = "function customSignal(t, frequency) {\n  return " + flask.getCode() + ";\n}";
+function generateSignal(period) {
+    last = 0;
+    const functionCode = "function customSignal(t, period) {\n  return " + flask.getCode() + ";\n}";
     const points = [];
-    const signalFunction = new Function('t', 'frequency', `${functionCode}; return customSignal(t, frequency);`);
-    for (let t = 0; t <= 1; t += TIME_STEP) {
-        points.push({x: t, y: signalFunction(t, frequency)});
+    // Check if the function is valid
+    try {
+        const signalFunction = new Function('t', 'period', `${functionCode}; return customSignal(t, period);`);
+        for (let t = 0; t <= 1; t += TIME_STEP) {
+            points.push({x: t, y: signalFunction(t, period)});
+        }
+        document.getElementById('errorInCode').style.display = 'none';
+    } catch (e) {
+        document.getElementById('errorInCode').style.display = 'inline';
+        return;
     }
     return points;
 }
