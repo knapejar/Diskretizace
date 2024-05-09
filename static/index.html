@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jaroslav Knápek">
+    <title>Diskretizace Signálu</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <div class="container">
+        <div class="container container-lg">
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="card-title p-2">Diskretizace Signálu</h1>
+                    <div class="row">
+                        <div class="col-12 col-sm-12 col-md-12 col-lg-4 col-xl-4">
+                            <form>
+                                <div class="alert alert-primary">
+                                    <h5>Parametry diskretizace</h5>
+                                    <div class="mb-3">
+                                        <label for="vzorkovaciPerioda" class="form-label">Vzorkovací perioda [1/1000]</label>
+                                        <input type="number" class="form-control" id="vzorkovaciPerioda" placeholder="Např. 10" value="25" min="1" max="100">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="sirkaKvantizacnihoIntervalu" class="form-label">Šířka kvantizačního intervalu</label>
+                                        <input type="number" step="0.1" class="form-control" id="sirkaKvantizacnihoIntervalu" placeholder="Např. 0.1" value="0.2" min="0.1" max="1">
+                                    </div>
+                                    <div class="mb-3">
+                                        <label for="signalFrequency" class="form-label">Periody signálu</label>
+                                        <input type="number" step="1" class="form-control" id="signalFrequency" placeholder="Např. 5" value="2" min="1" max="100">
+                                    </div>
+                                </div>
+                                <div class="alert alert-secondary">
+                                    <h5>
+                                        Parametry Signálu
+                                        <small id="errorInCode" class="text-danger" style="display: none;">
+                                            <i class="bi bi-exclamation-triangle-fill"></i>
+                                        </small>
+                                    </h5>
+                                    <div class="row code-editor"></div>
+                                    <div class="row">
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(0)">Lineární funkce</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(1)">Sinusoida</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(2)">Exponenciální funkce</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(3)">Absolutní hodnota</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(4)">Bézierova křivka</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(5)">Šum</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(6)">Sinusoida s šumem</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(7)">Souvislý šum</li>
+                                        <li class="btn m-1 btn-sm btn-secondary text-nowrap col" onclick="example(8)">Sinusoida se souvislým šumem</li>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="col-12 pb-3 col-sm-12 col-md-12 col-lg-8 col-xl-8">
+                            <canvas id="chartContainer" style="min-width: 100%; min-height: 200px;"></canvas>
+                            <div class="position-absolute top-0 end-0 p-3">
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox" id="autoUpdateCheckbox" checked>
+                                    <label class="form-check-label" for="autoUpdateCheckbox">Aktualizace grafu</label>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Full size documentatino modal -->
+    <div class="modal fade" id="documentationModal" tabindex="-1" aria-labelledby="documentationModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentationModalLabel">Dokumentace</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <iframe src="documentation.html" style="width: 100%; height: 80vh;"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Zavřít</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="text-center mt-5">
+        <p>&copy; 2024 Jaroslav Knápek, Teorie přenosu informace, <a href="#" data-bs-toggle="modal" data-bs-target="#documentationModal">Návod a dokumentace projektu</a></p>
+    </footer>
+    </div>
+
+    <footer class="text-center mt-5">
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/codeflask/build/codeflask.min.js"></script>
+    <script src="chart_config.js"></script>
+    <script src="signal_logic.js"></script>
+    <script src="element_logic.js"></script>
+</body>
+</html>

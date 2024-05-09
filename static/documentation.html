@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="author" content="Jaroslav Knápek">
+    <title>Popis programu: Diskretizace Signálu</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+</head>
+<body>
+    <container class="container">
+        <div class="text-center p-4">
+            <h1>Diskretizace Signálu</h1>
+        </div>
+        <div class="row">
+            <div class="col-md-6 p-4">
+                <hr class="my-4">
+                <h3>Návod</h3>
+                <p>V tomto programu je demonstrován algoritmus pro diskretizaci signálu primárně pro výukové účely, který byl vytvořen v rámci předmětu Teorie přenosu informace.</p>
+            </div>
+            <div class="col-md-6 p-4">
+                <hr class="my-4">
+                <h3>Spuštění aplikace</h3>
+                <p>Aplikaci Diskretizace Signálu spustíte pomocí příkazu <code>npm start</code> v kořenovém adresáři projektu.</p> Nebo můžete využít <a href="https://diskretizace-signalu.herokuapp.com/">online verzi</a>.
+            </div>
+            <div class="col-md-6 p-4">
+                <hr class="my-4">
+                <h3>Výběr typu signálu</h3>
+                <p>V horní části aplikace si můžete zobraziz ukázku signálu, který chcete diskretizovat.</p>
+                <div class="row">
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Lineární funkce</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Sinusoida</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Exponenciální funkce</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Absolutní hodnota</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Bézierova křivka</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Šum</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Sinusoida s šumem</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Souvislý šum</li>
+                    <li class="btn m-1 btn-sm btn-secondary text-nowrap col">Sinusoida se souvislým šumem</li>
+                </div>
+            </div>
+            <div class="col-md-6 p-4">
+                <hr class="my-4">
+                <h3>Nastavení parametrů zdroje signálu</h3>
+                <p>V závislosti na typu signálu, který jste vybrali můžete měnit periodu funkce.</p>
+                <p>Jakékoliv další změny signálu proveďte v editoru kódu níže. Kód musí být ve formátu JavaScript.</p>
+            </div>
+            <div class="col-md-6 p-4">
+                <hr class="my-4">
+                <h1 class="card-title p-2">Zdroje</h1>
+                <ul>
+                    <li>
+                        <a href="https://getbootstrap.com/" target="_blank">Bootstrap</a>
+                    </li>
+                    <li>
+                        <a href="https://icons.getbootstrap.com/" target="_blank">Bootstrap Icons</a>
+                    </li>
+                    <li>
+                        <a href="https://www.chartjs.org/" target="_blank">Chart.js</a>
+                    </li>
+                    <li>
+                        <a href="https://cs.wikipedia.org/wiki/Kvantov%C3%A1n%C3%AD_(sign%C3%A1l)" target="_blank">Wikipedie</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </container>
+</body>
